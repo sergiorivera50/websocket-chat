@@ -16,4 +16,13 @@ io.of('/').on('connect', socket => {
         console.log('\n%s', data)
         socket.broadcast.emit('broadcast', data)
     })
+
+    socket.on('join', data => {
+        console.log('\n%s', data)
+        console.log('Nickname: ', data.sender, ', id: ', socket.id)
+        const connectedClients = io.of('/').server.engine.clientsCount
+        console.log('Number of clients: %d', connectedClients)
+        socket.nickname = data.sender
+        socket.broadcast.emit('join', data)
+    })
 })

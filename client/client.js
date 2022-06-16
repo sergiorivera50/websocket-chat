@@ -9,6 +9,11 @@ console.log('Connecting to %s...', server)
 socket.on('connect', () => {
     nickname = process.argv[2]
     console.log('[INFO]: Welcome %s', nickname)
+
+    socket.emit('join', {
+        sender: nickname,
+        action: 'join'
+    })
 })
 
 socket.on('disconnect', reason => {
@@ -34,4 +39,8 @@ rl.on('line', input => {
 
 socket.on('broadcast', data => {
     console.log('%s', data.msg)
+})
+
+socket.on('join', data => {
+    console.log('[INFO]: %s has joined the chat', data.sender)
 })
