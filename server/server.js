@@ -47,4 +47,9 @@ io.of('/').on('connect', socket => {
         socket.broadcast.emit('quit', data)
         socket.disconnect(true)
     })
+
+    socket.on('trace', () => {
+        console.log('\n=========== Trace ===========')
+        console.log(io.of('/'))
+    })
 })

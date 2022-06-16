@@ -44,6 +44,8 @@ rl.on('line', input => {
             sender: nickname,
             action: 'quit'
         })
+    } else if ('tr;' === input) {
+        socket.emit('trace')
     }
 })
 
