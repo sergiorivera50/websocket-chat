@@ -87,4 +87,27 @@ io.of('/').on('connect', socket => {
 
         io.of('/').room_messages[data.group].push(data.msg)
     })
+
+    socket.on('list_members_group', data => {
+        console.log('\n%s', data)
+
+        let socketIds
+        let members = []
+
+        for (const [k, v] of io.of('/').adapter.rooms) {
+            if (k === data.group) socketIds = v
+        }
+
+        socketIds.forEach((socketId) => {
+            const socketInRoom = io.of('/').sockets.get(socketId)
+            members.push(socketInRoom.nickname)
+        })
+
+        socket.emit('list_members_group', {
+            sender: data.sender,
+            action: 'list_members_group',
+            group: data.group,
+            members: members
+        })
+    })
 })

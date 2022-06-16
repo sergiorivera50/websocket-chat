@@ -72,6 +72,13 @@ rl.on('line', input => {
             group: info[1],
             msg: info[2]
         })
+    } else if (input.startsWith('mbr;')) {
+        const str = input.slice(4)
+        socket.emit('list_members_group', {
+            sender: nickname,
+            action: 'list_members_group',
+            group: str
+        })
     }
 })
 
@@ -104,4 +111,11 @@ socket.on('join_group', data => {
 
 socket.on('broadcast_group', data => {
     console.log('%s', data.msg)
+})
+
+socket.on('list_members_group', data => {
+    console.log('[INFO]: List of members:')
+    for (let i = data.members.length-1; i >= 0; i--) {
+        console.log(data.members[i])
+    }
 })
