@@ -110,4 +110,17 @@ io.of('/').on('connect', socket => {
             members: members
         })
     })
+
+    socket.on('list_messages_group', data => {
+        console.log('\n%s', data)
+
+        let msgs = io.of('/').room_messages[data.group]
+
+        socket.emit('list_messages_group', {
+            sender: data.sender,
+            action: 'list_messages_group',
+            group: data.group,
+            msgs: msgs
+        })
+    })
 })

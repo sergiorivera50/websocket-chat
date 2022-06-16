@@ -79,6 +79,13 @@ rl.on('line', input => {
             action: 'list_members_group',
             group: str
         })
+    } else if (input.startsWith('msg;')) {
+        const str = input.slice(4)
+        socket.emit('list_messages_group', {
+            sender: nickname,
+            action: 'list_messages_group',
+            group: str
+        })
     }
 })
 
@@ -117,5 +124,12 @@ socket.on('list_members_group', data => {
     console.log('[INFO]: List of members:')
     for (let i = data.members.length-1; i >= 0; i--) {
         console.log(data.members[i])
+    }
+})
+
+socket.on('list_messages_group', data => {
+    console.log('[INFO]: History of messages:')
+    for (let i = data.msgs.length-1; i >= 0; i--) {
+        console.log(data.msgs[i])
     }
 })
