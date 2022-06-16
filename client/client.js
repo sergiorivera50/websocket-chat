@@ -27,6 +27,7 @@ const rl = readline.createInterface({
 })
 
 const s_pattern = /^s;([A-Z\d]+);(.+)/i
+const bg_pattern = /^bg;([A-Z\d]+);(.+)/i
 
 rl.on('line', input => {
     if (input.startsWith('b;')) {
@@ -63,6 +64,14 @@ rl.on('line', input => {
             action: 'join_group',
             group: str
         })
+    } else if (bg_pattern.test(input)) {
+        const info = input.match(bg_pattern)
+        socket.emit('broadcast_group', {
+            sender: nickname,
+            action: 'broadcast_group',
+            group: info[1],
+            msg: info[2]
+        })
     }
 })
 
@@ -91,4 +100,8 @@ socket.on('send', data => {
 
 socket.on('join_group', data => {
     console.log('[INFO]: %s has joined the group', data.sender)
+})
+
+socket.on('broadcast_group', data => {
+    console.log('%s', data.msg)
 })

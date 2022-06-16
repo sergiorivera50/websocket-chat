@@ -73,4 +73,18 @@ io.of('/').on('connect', socket => {
         console.log('Group: ', data.group, ', Joined: ', data.sender)
         io.of('/').to(data.group).emit('join_group', data)
     })
+
+    socket.on('broadcast_group', data => {
+        console.log('\n%s', data)
+
+        socket.to(data.group).emit('broadcast_group', data)
+
+        if (undefined === io.of('/').room_messages)
+            io.of('/').room_messages = {}
+
+        if (undefined === io.of('/').room_messages[data.group])
+            io.of('/').room_messages[data.group] = []
+
+        io.of('/').room_messages[data.group].push(data.msg)
+    })
 })
