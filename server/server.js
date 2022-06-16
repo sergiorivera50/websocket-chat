@@ -123,4 +123,19 @@ io.of('/').on('connect', socket => {
             msgs: msgs
         })
     })
+
+    socket.on('list_groups', data => {
+        console.log('\n%s', data)
+
+        let groups = []
+        for (const [k, v] of io.of('/').adapter.rooms) {
+            if (!v.has(k)) groups.push(k)
+        }
+
+        socket.emit('list_groups', {
+            sender: data.sender,
+            action: 'list_groups',
+            groups: groups
+        })
+    })
 })
