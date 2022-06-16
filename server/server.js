@@ -3,6 +3,24 @@ const io = require('socket.io')(port)
 
 console.log('Server is listening on port %d', port)
 
+let sqlite3 = require('sqlite3')
+let db = new sqlite3.Database('./websockets.db', err => {
+    if (err) console.log(err)
+})
+
+function db_save_message(group, sender, msg) {
+    db.serialize(() => {
+        db.run('CREATE TABLE IF NOT EXISTS room_messages(target_group TEXT, sender TEXT, msg TEXT)', err => {
+            if (err) throw err
+        })
+
+        db.run('INSERT INTO room_messages(target_group, sender, msg) VALUES(?,?,?)', [group, sender, msg], err => {
+            if (err) throw err
+            console.log('Saved the message to the database')
+        })
+    })
+}
+
 io.of('/').on('connect', socket => {
     console.log('\nA client connected')
 
@@ -86,6 +104,8 @@ io.of('/').on('connect', socket => {
             io.of('/').room_messages[data.group] = []
 
         io.of('/').room_messages[data.group].push(data.msg)
+
+        db_save_message(data.group, data.sender, data.msg)
     })
 
     socket.on('list_members_group', data => {
@@ -114,13 +134,24 @@ io.of('/').on('connect', socket => {
     socket.on('list_messages_group', data => {
         console.log('\n%s', data)
 
-        let msgs = io.of('/').room_messages[data.group]
+        db.serialize(() => {
+            db.all('SELECT msg FROM room_messages WHERE target_group = ?', [data.group], (err, rows) => {
+                if (err) throw err
 
-        socket.emit('list_messages_group', {
-            sender: data.sender,
-            action: 'list_messages_group',
-            group: data.group,
-            msgs: msgs
+                let msgs = []
+
+                rows.forEach(row => {
+                    console.log('Got a message from db: ' + row.msg)
+                    msgs.push(row.msg)
+                })
+
+                socket.emit('list_messages_group', {
+                    sender: data.sender,
+                    action: 'list_messages_group',
+                    group: data.group,
+                    msgs: msgs
+                })
+            })
         })
     })
 
