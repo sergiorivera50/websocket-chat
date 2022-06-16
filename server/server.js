@@ -30,7 +30,7 @@ io.of('/').on('connect', socket => {
         console.log('\n%s', data)
 
         let users = []
-        for (const [k, v] of io.of('/').sockets) {
+        for (const [_, v] of io.of('/').sockets) {
             users.push(v.nickname)
         }
 
@@ -39,5 +39,12 @@ io.of('/').on('connect', socket => {
             action: 'list',
             users: users
         })
+    })
+
+    socket.on('quit', data => {
+        console.log('\n%s', data)
+
+        socket.broadcast.emit('quit', data)
+        socket.disconnect(true)
     })
 })

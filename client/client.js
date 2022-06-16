@@ -39,6 +39,11 @@ rl.on('line', input => {
             sender: nickname,
             action: 'list'
         })
+    } else if ('q;' === input) {
+        socket.emit('quit', {
+            sender: nickname,
+            action: 'quit'
+        })
     }
 })
 
@@ -55,4 +60,8 @@ socket.on('list', data => {
     for (let i = 0; i < data.users.length; i++) {
         console.log(data.users[i])
     }
+})
+
+socket.on('quit', data => {
+    console.log('[INFO] %s quit the chat', data.sender)
 })
