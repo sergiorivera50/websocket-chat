@@ -65,4 +65,12 @@ io.of('/').on('connect', socket => {
 
         if (socketId !== null) io.of('/').to(socketId).emit('send', data)
     })
+
+    socket.on('join_group', data => {
+        console.log('\n%s', data)
+
+        socket.join(data.group)
+        console.log('Group: ', data.group, ', Joined: ', data.sender)
+        io.of('/').to(data.group).emit('join_group', data)
+    })
 })

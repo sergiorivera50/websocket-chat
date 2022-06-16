@@ -56,6 +56,13 @@ rl.on('line', input => {
             receiver: info[1],
             msg: info[2]
         })
+    } else if (input.startsWith('jg;')) {
+        const str = input.slice(3)
+        socket.emit('join_group', {
+            sender: nickname,
+            action: 'join_group',
+            group: str
+        })
     }
 })
 
@@ -78,6 +85,10 @@ socket.on('quit', data => {
     console.log('[INFO] %s quit the chat', data.sender)
 })
 
-socket.on('send', (data) => {
+socket.on('send', data => {
     console.log('%s', data.msg)
+})
+
+socket.on('join_group', data => {
+    console.log('[INFO]: %s has joined the group', data.sender)
 })
