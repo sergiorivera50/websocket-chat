@@ -34,6 +34,11 @@ rl.on('line', input => {
             action: 'broadcast',
             msg: str
         })
+    } else if ('ls;' === input) {
+        socket.emit('list', {
+            sender: nickname,
+            action: 'list'
+        })
     }
 })
 
@@ -43,4 +48,11 @@ socket.on('broadcast', data => {
 
 socket.on('join', data => {
     console.log('[INFO]: %s has joined the chat', data.sender)
+})
+
+socket.on('list', data => {
+    console.log('[INFO] List of nicknames:')
+    for (let i = 0; i < data.users.length; i++) {
+        console.log(data.users[i])
+    }
 })

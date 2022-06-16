@@ -25,4 +25,19 @@ io.of('/').on('connect', socket => {
         socket.nickname = data.sender
         socket.broadcast.emit('join', data)
     })
+
+    socket.on('list', data => {
+        console.log('\n%s', data)
+
+        let users = []
+        for (const [k, v] of io.of('/').sockets) {
+            users.push(v.nickname)
+        }
+
+        socket.emit('list', {
+            sender: data.sender,
+            action: 'list',
+            users: users
+        })
+    })
 })
