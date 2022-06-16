@@ -26,9 +26,11 @@ const rl = readline.createInterface({
     output: process.stdout
 })
 
+const s_pattern = /^s;([A-Z\d]+);(.+)/i
+
 rl.on('line', input => {
     if (input.startsWith('b;')) {
-        let str = input.slice(2)
+        const str = input.slice(2)
         socket.emit('broadcast', {
             sender: nickname,
             action: 'broadcast',
@@ -46,6 +48,14 @@ rl.on('line', input => {
         })
     } else if ('tr;' === input) {
         socket.emit('trace')
+    } else if (s_pattern.test(input)) {
+        const info = input.match(s_pattern)
+        socket.emit('send', {
+            sender: nickname,
+            action: 'send',
+            receiver: info[1],
+            msg: info[2]
+        })
     }
 })
 
@@ -66,4 +76,8 @@ socket.on('list', data => {
 
 socket.on('quit', data => {
     console.log('[INFO] %s quit the chat', data.sender)
+})
+
+socket.on('send', (data) => {
+    console.log('%s', data.msg)
 })

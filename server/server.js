@@ -52,4 +52,17 @@ io.of('/').on('connect', socket => {
         console.log('\n=========== Trace ===========')
         console.log(io.of('/'))
     })
+
+    socket.on('send', data => {
+        console.log('\n%s', data)
+
+        let socketId
+        for (const [k, v] of io.of('/').sockets) {
+            if (data.receiver.toLowerCase() === v.nickname) {
+                socketId = k
+            }
+        }
+
+        if (socketId !== null) io.of('/').to(socketId).emit('send', data)
+    })
 })
