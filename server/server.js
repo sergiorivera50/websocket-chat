@@ -138,4 +138,12 @@ io.of('/').on('connect', socket => {
             groups: groups
         })
     })
+
+    socket.on('leave_group', data => {
+        console.log('\n%s', data)
+
+        socket.leave(data.group)
+        console.log('Group: ', data.group, ', Left: ', data.sender)
+        io.of('/').to(data.group).emit('leave_group', data)
+    })
 })

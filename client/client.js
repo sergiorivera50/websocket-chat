@@ -91,6 +91,13 @@ rl.on('line', input => {
             sender: nickname,
             action: 'list_groups'
         })
+    } else if (input.startsWith('lg;')) {
+        const str = input.slice(3)
+        socket.emit('leave_group', {
+            sender: nickname,
+            action: 'leave_group',
+            group: str
+        })
     }
 })
 
@@ -144,4 +151,8 @@ socket.on('list_groups', data => {
     for (let i = data.groups.length-1; i >= 0; i--) {
         console.log(data.groups[i])
     }
+})
+
+socket.on('leave_group', data => {
+    console.log('[INFO]: %s left the group', data.sender)
 })
